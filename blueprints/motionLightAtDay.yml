@@ -29,13 +29,13 @@ blueprint:
     sunset_offset_time:
       name: Sunset - Offset - time
       description: Offset the sunset time.
-      default: "-1:00:00"
+      default: "1:00:00"
       selector:
         time: {}
     sunrise_offset_time:
       name: Sunrise - Offset - time
       description: Offset the sunset time.
-      default: "1:00:00"
+      default: "-1:00:00"
       selector:
         time: {}
 
