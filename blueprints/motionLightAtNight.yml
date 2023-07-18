@@ -3,7 +3,7 @@ blueprint:
   description: Turn on a light when motion is detected, after sunset and before sunrise
   domain: automation
   author: Philipp Klüter
-  source_url: https://git.klueter.dev/ThronRycer/HomeAssistant/src/branch/main/blueprints/motionLightAtNight.yml
+  source_url: https://github.com/ThronRyzer/HomeAssistant/blob/main/blueprints/motionLightAtNight.yml
   input:
     motion_entity:
       name: Motion Sensor
