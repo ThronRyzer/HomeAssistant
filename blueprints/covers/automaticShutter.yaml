@@ -33,8 +33,6 @@ blueprint:
               - window
               - door
 
-# If motion is detected within the delay,
-# we restart the script.
 mode: restart
 max_exceeded: silent
 
@@ -81,6 +79,6 @@ actions:
               - condition: state
                 entity_id: binary_sensor.workday_sensor
                 state: "off"
-        actions:
+        sequence:
           - action: cover.open_cover
             target: !input shutter_entity
