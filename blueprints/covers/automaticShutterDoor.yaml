@@ -29,7 +29,7 @@ blueprint:
       default: "21:30:00"
       selector:
         time:
-    sensor_device:
+    sensor_entity:
       name: Door/Window Sensor
       selector:
         entity:
@@ -93,28 +93,30 @@ actions:
                     state: "off"
         sequence:
           - action: cover.open_cover
-            target: !input shutter_entity
+            target:
+              - entity_id: !input shutter_entity
       - conditions:
           - and:
               - condition: trigger
                 id: workday_trigger
               - condition: device
                 type: is_not_open
-                entity_id: !input sensor_device
+                entity_id: !input sensor_entity
               - condition: numeric_state
                 entity_id: sun.sun
                 attribute: elevation
                 below: -5
         sequence:
           - action: cover.open_cover
-            target: !input shutter_entity
+            target:
+              - entity_id: !input shutter_entity
       - conditions:
           - and:
               - condition: trigger
                 id: sun_elevation_trigger
               - condition: device
                 type: is_not_open
-                entity_id: !input sensor_device
+                entity_id: !input sensor_entity
               - condition: numeric_state
                 entity_id: sun.sun
                 attribute: elevation
@@ -124,9 +126,12 @@ actions:
               - condition: time
                 before: !input close_time
             then:
-              - entity_id: !input shutter_entity
-                type: set_position
+              action: cover.set_cover_position
+              target:
+                entity_id: !input shutter_entity
+              data:
                 position: 60
             else:
+          - action: cover.close_cover
+            target:
               - entity_id: !input shutter_entity
-                type: close
