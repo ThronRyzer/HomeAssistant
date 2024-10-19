@@ -1,6 +1,6 @@
 blueprint:
-  name: Automated Shutter
-  description: Open and close a Shutter
+  name: Automated Shutter (Door)
+  description: Open and close a Shutter in combination with a door sensor
   domain: automation
   author: Philipp Klüter
   input:
@@ -23,14 +23,19 @@ blueprint:
       default: "08:30:00"
       selector:
         time:
-    sensor:
+    close_time:
+      name: Closing time
+      description: Time to close the shutter.
+      default: "21:30:00"
+      selector:
+        time:
+    sensor_device:
       name: Door/Window Sensor
       selector:
-        entity:
+        device:
           filter:
             domain: binary_sensor
             device_class:
-              - window
               - door
 
 mode: restart
@@ -38,10 +43,19 @@ max_exceeded: silent
 
 triggers:
   - id: workday_morning_trigger
-    at: "06:30:00"
+    at: !input workday_morning
     trigger: time
   - id: holiday_morning_trigger
-    at: "08:30:00"
+    at: !input holiday_morning
+    trigger: time
+  - id: sun_elevation_trigger
+    entity_id:
+      - sun.sun
+    attribute: elevation
+    below: -5
+    trigger: numeric_state
+  - id: night_trigger
+    at: !input close_time
     trigger: time
 conditions:
   - condition: or
@@ -63,22 +77,57 @@ conditions:
             state: "off"
 actions:
   - choose:
-      - or:
-          - condition: and
-            conditions:
-              - condition: trigger
-                id: workday_trigger
-              - condition: state
-                entity_id: binary_sensor.workday_sensor
-                state: "on"
-          - condition: and
-            conditions:
-              - condition: trigger
-                id:
-                  - holiday_trigger
-              - condition: state
-                entity_id: binary_sensor.workday_sensor
-                state: "off"
+      - conditions:
+          - or:
+              - and:
+                  - condition: trigger
+                    id: workday_trigger
+                  - condition: state
+                    entity_id: binary_sensor.workday_sensor
+                    state: "on"
+              - and:
+                  - condition: trigger
+                    id:
+                      - holiday_trigger
+                  - condition: state
+                    entity_id: binary_sensor.workday_sensor
+                    state: "off"
         sequence:
           - action: cover.open_cover
             target: !input shutter_entity
+      - conditions:
+          - and:
+              - condition: trigger
+                id: workday_trigger
+              - condition: device
+                type: is_not_open
+                entity_id: !input sensor_device
+              - condition: numeric_state
+                entity_id: sun.sun
+                attribute: elevation
+                below: -5
+        sequence:
+          - action: cover.open_cover
+            target: !input shutter_entity
+      - conditions:
+          - and:
+              - condition: trigger
+                id: sun_elevation_trigger
+              - condition: device
+                type: is_not_open
+                entity_id: !input sensor_device
+              - condition: numeric_state
+                entity_id: sun.sun
+                attribute: elevation
+                below: -5
+        sequence:
+          - if:
+              - condition: time
+                before: !input close_time
+            then:
+              - entity_id: !input shutter_entity
+                type: set_position
+                position: 60
+            else:
+              - entity_id: !input shutter_entity
+                type: close
