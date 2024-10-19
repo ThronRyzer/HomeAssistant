@@ -99,9 +99,9 @@ actions:
           - and:
               - condition: trigger
                 id: workday_trigger
-              - condition: device
-                type: is_not_open
+              - condition: state
                 entity_id: !input sensor_entity
+                state: "off"
               - condition: numeric_state
                 entity_id: sun.sun
                 attribute: elevation
@@ -114,9 +114,9 @@ actions:
           - and:
               - condition: trigger
                 id: sun_elevation_trigger
-              - condition: device
-                type: is_not_open
+              - condition: state
                 entity_id: !input sensor_entity
+                state: "off"
               - condition: numeric_state
                 entity_id: sun.sun
                 attribute: elevation
