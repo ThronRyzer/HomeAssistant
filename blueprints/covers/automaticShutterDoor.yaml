@@ -32,11 +32,10 @@ blueprint:
     sensor_device:
       name: Door/Window Sensor
       selector:
-        device:
+        entity:
           filter:
             domain: binary_sensor
-            device_class:
-              - door
+            device_class: door
 
 mode: restart
 max_exceeded: silent
