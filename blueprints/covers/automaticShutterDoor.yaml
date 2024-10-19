@@ -94,7 +94,7 @@ actions:
         sequence:
           - action: cover.open_cover
             target:
-              - entity_id: !input shutter_entity
+              entity_id: !input shutter_entity
       - conditions:
           - and:
               - condition: trigger
@@ -109,7 +109,7 @@ actions:
         sequence:
           - action: cover.open_cover
             target:
-              - entity_id: !input shutter_entity
+              entity_id: !input shutter_entity
       - conditions:
           - and:
               - condition: trigger
@@ -134,4 +134,4 @@ actions:
             else:
           - action: cover.close_cover
             target:
-              - entity_id: !input shutter_entity
+              entity_id: !input shutter_entity
