@@ -1,0 +1,86 @@
+blueprint:
+  name: Automated Shutter
+  description: Open and close a Shutter
+  domain: automation
+  author: Philipp Klüter
+  input:
+    shutter_entity:
+      name: Motion Sensor
+      selector:
+        entity:
+          filter:
+            domain: cover
+            device_class: shutter
+    workday_morning:
+      name: Workday Opening
+      description: Time to open the shutter on a workday.
+      default: "06:30:00"
+      selector:
+        time:
+    holiday_morning:
+      name: Holiday / Weekend Opening
+      description: Time to open the shutter on a holiday / weekend..
+      default: "08:30:00"
+      selector:
+        time:
+    sensor:
+      name: Door/Window Sensor
+      selector:
+        entity:
+          filter:
+            domain: binary_sensor
+            device_class:
+              - window
+              - door
+
+# If motion is detected within the delay,
+# we restart the script.
+mode: restart
+max_exceeded: silent
+
+triggers:
+  - id: workday_morning_trigger
+    at: "06:30:00"
+    trigger: time
+  - id: holiday_morning_trigger
+    at: "08:30:00"
+    trigger: time
+conditions:
+  - condition: or
+    conditions:
+      - condition: and
+        conditions:
+          - condition: trigger
+            id: workday_trigger
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state: "on"
+      - condition: and
+        conditions:
+          - condition: trigger
+            id:
+              - holiday_trigger
+          - condition: state
+            entity_id: binary_sensor.workday_sensor
+            state: "off"
+actions:
+  - choose:
+      - or:
+          - condition: and
+            conditions:
+              - condition: trigger
+                id: workday_trigger
+              - condition: state
+                entity_id: binary_sensor.workday_sensor
+                state: "on"
+          - condition: and
+            conditions:
+              - condition: trigger
+                id:
+                  - holiday_trigger
+              - condition: state
+                entity_id: binary_sensor.workday_sensor
+                state: "off"
+        actions:
+          - action: cover.open_cover
+            target: !input shutter_entity
