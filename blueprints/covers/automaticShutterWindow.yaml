@@ -5,7 +5,7 @@ blueprint:
   author: Philipp Klüter
   input:
     shutter_entity:
-      name: Shutter Entity
+      name: Shutter Sensor
       selector:
         entity:
           filter:
@@ -29,13 +29,6 @@ blueprint:
       default: "21:30:00"
       selector:
         time:
-    sensor_entity:
-      name: Door Sensor
-      selector:
-        entity:
-          filter:
-            domain: binary_sensor
-            device_class: door
 
 mode: restart
 max_exceeded: silent
@@ -81,9 +74,6 @@ actions:
           - and:
               - condition: trigger
                 id: night_trigger
-              - condition: state
-                entity_id: !input sensor_entity
-                state: "off"
               - condition: numeric_state
                 entity_id: sun.sun
                 attribute: elevation
@@ -96,9 +86,6 @@ actions:
           - and:
               - condition: trigger
                 id: sun_elevation_trigger
-              - condition: state
-                entity_id: !input sensor_entity
-                state: "off"
               - condition: numeric_state
                 entity_id: sun.sun
                 attribute: elevation
