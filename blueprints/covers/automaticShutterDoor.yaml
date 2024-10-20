@@ -1,6 +1,6 @@
 blueprint:
-  name: Automated Shutter (Door)
-  description: Open and close a Shutter in combination with a door sensor
+  name: Automated Shutter (Window)
+  description: Open and close a Shutter at specific time and sun elevation.
   domain: automation
   author: Philipp Klüter
   input:
