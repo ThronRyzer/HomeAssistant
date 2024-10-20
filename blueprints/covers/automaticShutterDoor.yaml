@@ -62,14 +62,14 @@ actions:
           - or:
               - and:
                   - condition: trigger
-                    id: workday_trigger
+                    id: workday_morning_trigger
                   - condition: state
                     entity_id: binary_sensor.workday_sensor
                     state: "on"
               - and:
                   - condition: trigger
                     id:
-                      - holiday_trigger
+                      - holiday_morning_trigger
                   - condition: state
                     entity_id: binary_sensor.workday_sensor
                     state: "off"
@@ -80,7 +80,7 @@ actions:
       - conditions:
           - and:
               - condition: trigger
-                id: workday_trigger
+                id: night_trigger
               - condition: state
                 entity_id: !input sensor_entity
                 state: "off"
@@ -89,7 +89,7 @@ actions:
                 attribute: elevation
                 below: -5
         sequence:
-          - action: cover.open_cover
+          - action: cover.close_cover
             target:
               entity_id: !input shutter_entity
       - conditions:
