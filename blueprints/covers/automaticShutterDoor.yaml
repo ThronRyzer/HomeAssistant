@@ -114,6 +114,6 @@ actions:
               data:
                 position: 60
             else:
-          - action: cover.close_cover
-            target:
-              entity_id: !input shutter_entity
+              - action: cover.close_cover
+                target:
+                  entity_id: !input shutter_entity
