@@ -17,6 +17,13 @@ blueprint:
         target:
           entity:
             domain: light
+    disabled_when_on:
+      name: Disabled when on
+      description: 'The motion activation is disabled when one of these lights is on.'
+      selector:
+        target:
+          entity:
+            domain: light
     no_motion_wait:
       name: Wait time
       description: Time to leave the light on after last motion is detected.
@@ -51,26 +58,29 @@ max_exceeded: silent
 triggers:
   - trigger: state
     entity_id: !input motion_entity
-    from: "off"
-    to: "on"
+    from: 'off'
+    to: 'on'
 
 conditions:
   - condition: numeric_state
     entity_id: !input lux_entity
     below: 5
+  - condition: state
+    entity_id: !disabled_when_on
+    state: 'off'
 
 actions:
-  - alias: "Turn on the light"
+  - alias: 'Turn on the light'
     action: light.turn_on
     target: !input light_target
-  - alias: "Wait until there is no motion from device"
+  - alias: 'Wait until there is no motion from device'
     wait_for_trigger:
       - trigger: state
         entity_id: !input motion_entity
-        from: "on"
-        to: "off"
-  - alias: "Wait the number of seconds that has been set"
+        from: 'on'
+        to: 'off'
+  - alias: 'Wait the number of seconds that has been set'
     delay: !input no_motion_wait
-  - alias: "Turn off the light"
+  - alias: 'Turn off the light'
     action: light.turn_off
     target: !input light_target
